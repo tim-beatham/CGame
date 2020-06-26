@@ -3,6 +3,13 @@
 
 #include "raylib.h"
 
+#define MAX_BULLETS 10
+
+
+const int screenWidth = 1024;
+const int screenHeight = 768;
+
+
 typedef struct {
     float velocity;
     bool isActive;
@@ -22,6 +29,8 @@ typedef struct {
 } Player;
 
 
+#define MAX_ENEMIES 20
+
 typedef struct {    
     Rectangle boundingBox;
     int size;
@@ -31,18 +40,22 @@ typedef struct {
     float velocity;
 } Enemy;
 
-
 Bullet *instantiateBullets();
 Player instantiatePlayer();
-Enemy *instantiateEnemies();
-void fire(Bullet *bullets, float playerPosX, float playerPosY, float angle);
 void drawBullets(Bullet *bullets);
 void updateBullets(Bullet *bullets);
 void movePlayer(Player* player);
+void fire(Bullet *bullets, float playerPosX, float playerPosY, float angle);
+bool isPlayerDead(Enemy* enemies, Player player);
+void reset(Enemy* enemies, Player *player);
+
+
+Enemy *instantiateEnemies();
 void drawEnemies(Enemy* enemies, Player player);
 void spawnEnemy(Enemy* enemies);
-bool isPlayerDead(Enemy* enemies, Player player);
 void killEnemies(Enemy* enemies, Bullet* bullets);
 void updateEnemies(Enemy* enemies, Player player);
-void reset(Enemy* enemies, Player *player);
+
+
+
 #endif
