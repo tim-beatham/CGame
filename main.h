@@ -56,6 +56,8 @@ void spawnEnemy(Enemy* enemies);
 void killEnemies(Enemy* enemies, Bullet* bullets);
 void updateEnemies(Enemy* enemies, Player player);
 
+void freeDataStructs(Enemy *enemies, Bullet *bullet);
+
 
 
 #endif

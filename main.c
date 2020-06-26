@@ -85,8 +85,14 @@ int main() {
         EndDrawing();       
     }
 
+    freeDataStructs(enemies, bullets);
     CloseWindow();
     return 0;
+}
+
+void freeDataStructs(Enemy *enemies, Bullet *bullets) {
+    free(enemies);
+    free(bullets);
 }
 
 
