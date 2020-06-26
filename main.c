@@ -295,6 +295,8 @@ bool isPlayerDead(Enemy* enemies, Player player) {
         }
     }
 
+    printf("made a change bruh");
+
     return false;
 }
 
