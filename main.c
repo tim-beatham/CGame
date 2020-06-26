@@ -24,7 +24,11 @@ int main() {
 
     Enemy *enemies = instantiateEnemies();
 
-    double timeLastSpawn = 0;
+    int timeLastSpawn = 0;
+
+    double lastChange = 0;
+
+    int spawnAmount = 1;
 
     // The Main Game Loop.
     while (!WindowShouldClose()) {
@@ -43,15 +47,22 @@ int main() {
                 fire(bullets, player.boundingBox.x, player.boundingBox.y, (player.rotation / 360) * 2 * PI);
         }
 
+        if (IsKeyPressed(KEY_R)) reset(enemies, &player);
+
         updateBullets(bullets);
         updateEnemies(enemies, player);
         killEnemies(enemies, bullets);
 
         if ((GetTime() - timeLastSpawn) > 4){
-            
-            spawnEnemy(enemies);
+            for (int i = 0; i < spawnAmount; i++)
+                spawnEnemy(enemies);
             timeLastSpawn = GetTime();
         }
+
+        if (GetTime() - lastChange > 10) {
+            spawnAmount++;
+            lastChange = GetTime();
+        } 
 
         if (isPlayerDead(enemies, player))
             player.isAlive = false;
@@ -86,16 +97,29 @@ Player instantiatePlayer() {
     player.rotation = 0;
     player.origin = (Vector2) {player.size/2, player.size/2};
     player.isAlive = true;
+    player.velocity = 3.0f;
 
     return player;
 }
 
 void movePlayer(Player* player) {
+
+    float xDirection = 0;
+    float yDirection = 0;
+
     if (player -> isAlive){
-        if (IsKeyDown(KEY_D)) player -> boundingBox.x += 2.0f;
-        if (IsKeyDown(KEY_A)) player -> boundingBox.x -= 2.0f;
-        if (IsKeyDown(KEY_W)) player -> boundingBox.y -= 2.0f;
-        if (IsKeyDown(KEY_S)) player -> boundingBox.y += 2.0f;
+        if (IsKeyDown(KEY_D)) xDirection += 1;
+        if (IsKeyDown(KEY_A)) xDirection -= 1;
+        if (IsKeyDown(KEY_W)) yDirection -= 1;
+        if (IsKeyDown(KEY_S)) yDirection += 1;
+
+        // Angle between the x and y.
+        float resultant = sqrtf( pow(xDirection, 2) + pow(yDirection, 2));
+        
+        if (resultant != 0) {
+            player -> boundingBox.x += ((player -> velocity) * (xDirection / resultant));
+            player -> boundingBox.y += ((player -> velocity) * (yDirection / resultant));
+        }
     }
 }
 
@@ -118,6 +142,19 @@ Bullet *instantiateBullets() {
     }
 
     return bullets;
+}
+
+
+void reset(Enemy *enemies,  Player *player) {
+    
+    for (int i = 0; i < MAX_ENEMIES; i++) {
+        enemies[i].isAlive = false;
+    }
+
+    player -> boundingBox.x = screenWidth / 2;
+    player -> boundingBox.y = screenHeight / 2;
+
+    player -> isAlive = true;
 }
 
 

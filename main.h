@@ -18,6 +18,7 @@ typedef struct {
     float rotation;
     Vector2 origin;
     bool isAlive;
+    float velocity;
 } Player;
 
 
@@ -43,4 +44,5 @@ void spawnEnemy(Enemy* enemies);
 bool isPlayerDead(Enemy* enemies, Player player);
 void killEnemies(Enemy* enemies, Bullet* bullets);
 void updateEnemies(Enemy* enemies, Player player);
+void reset(Enemy* enemies, Player *player);
 #endif
