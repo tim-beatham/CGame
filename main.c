@@ -114,7 +114,7 @@ void movePlayer(Player* player) {
         if (IsKeyDown(KEY_S)) yDirection += 1;
 
         // Angle between the x and y.
-        float resultant = sqrtf( pow(xDirection, 2) + pow(yDirection, 2));
+        float resultant = sqrtf(pow(xDirection, 2) + pow(yDirection, 2));
         
         if (resultant != 0) {
             player -> boundingBox.x += ((player -> velocity) * (xDirection / resultant));
@@ -279,6 +279,7 @@ void updateEnemies(Enemy *enemies, Player player) {
 void drawEnemies(Enemy *enemies, Player player) {
     for (int i = 0; i < MAX_ENEMIES; i++) {
         if (enemies[i].isAlive) {
+
             DrawRectanglePro(enemies[i].boundingBox, enemies[i].origin, enemies[i].rotation, BLUE);
         }
     }
@@ -309,4 +310,7 @@ void killEnemies(Enemy* enemies, Bullet* bullets) {
         }
     } 
 }
+
+
+
 
