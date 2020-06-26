@@ -24,7 +24,7 @@ int main() {
 
     Enemy *enemies = instantiateEnemies();
 
-    spawnEnemy(enemies);
+    double timeLastSpawn = 0;
 
     // The Main Game Loop.
     while (!WindowShouldClose()) {
@@ -39,12 +39,19 @@ int main() {
 
         if (IsKeyReleased(KEY_SPACE)) {
             // Convert the rotation to radians.
-            fire(bullets, player.boundingBox.x, player.boundingBox.y, (player.rotation / 360) * 2 * PI);
+            if (player.isAlive)
+                fire(bullets, player.boundingBox.x, player.boundingBox.y, (player.rotation / 360) * 2 * PI);
         }
 
         updateBullets(bullets);
         updateEnemies(enemies, player);
         killEnemies(enemies, bullets);
+
+        if ((GetTime() - timeLastSpawn) > 4){
+            
+            spawnEnemy(enemies);
+            timeLastSpawn = GetTime();
+        }
 
         if (isPlayerDead(enemies, player))
             player.isAlive = false;
@@ -84,10 +91,12 @@ Player instantiatePlayer() {
 }
 
 void movePlayer(Player* player) {
-    if (IsKeyDown(KEY_D)) player -> boundingBox.x += 2.0f;
-    if (IsKeyDown(KEY_A)) player -> boundingBox.x -= 2.0f;
-    if (IsKeyDown(KEY_W)) player -> boundingBox.y -= 2.0f;
-    if (IsKeyDown(KEY_S)) player -> boundingBox.y += 2.0f;
+    if (player -> isAlive){
+        if (IsKeyDown(KEY_D)) player -> boundingBox.x += 2.0f;
+        if (IsKeyDown(KEY_A)) player -> boundingBox.x -= 2.0f;
+        if (IsKeyDown(KEY_W)) player -> boundingBox.y -= 2.0f;
+        if (IsKeyDown(KEY_S)) player -> boundingBox.y += 2.0f;
+    }
 }
 
 
@@ -114,7 +123,6 @@ Bullet *instantiateBullets() {
 
 // Triggered when the user presses the mouse.
 void fire(Bullet *bullets, float playerPosX, float playerPosY, float angle) {
-
     // Iterate over the bullets and find one which is not active.
     Bullet *bullet = NULL;
 
@@ -185,8 +193,28 @@ void spawnEnemy(Enemy *enemies) {
     for (int i = 0; i < MAX_ENEMIES; i++) {
         if (!enemies[i].isAlive) {
             enemies[i].isAlive = true;
-            enemies[i].boundingBox.x = 100;
-            enemies[i].boundingBox.y = 100;
+
+            int spawnFrom = rand() % 4;
+
+            switch (spawnFrom) {
+                case 0:
+                    enemies[i].boundingBox.y = 0;
+                    enemies[i].boundingBox.x = rand() % screenWidth;
+                    break;
+                case 1:
+                    enemies[i].boundingBox.y = screenHeight;
+                    enemies[i].boundingBox.x = rand() % screenWidth;
+                    break;
+                case 2:
+                    enemies[i].boundingBox.y = rand() % screenHeight;
+                    enemies[i].boundingBox.x = 0;
+                    break;
+                case 3:
+                    enemies[i].boundingBox.y = rand() % screenHeight;
+                    enemies[i].boundingBox.x = screenWidth;
+                    break;
+            }
+
             break;
         }
     }
