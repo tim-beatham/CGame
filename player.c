@@ -19,7 +19,7 @@ Player instantiatePlayer() {
     Player player;
 
     player.size = 50;
-    player.boundingBox = (Rectangle) {300, 300, 
+    player.boundingBox = (Rectangle) {worldWidth/2, worldHeight/2, 
                                             player.size, player.size};
     player.rotation = 0;
     player.origin = (Vector2) {player.size/2, player.size/2};
@@ -39,14 +39,23 @@ Player instantiatePlayer() {
  * 
  * @param player 
  */
-void movePlayer(Player* player, float elapsedTime) {
+void movePlayer(Player* player, float elapsedTime, Camera2D camera,
+                                Dust *dust, Star *stars, Rectangle worldRect) {
+
+
 
     // Work out the rotation of the player.
-    float yDifference = GetMouseY() - player -> boundingBox.y;
-    float xDifference = GetMouseX() - player -> boundingBox.x;
+    // First need to convert the mouse position to world coordinates.
+    Vector2 mouseCoords = (Vector2) {GetMouseX(), GetMouseY()};
+    mouseCoords = GetScreenToWorld2D(mouseCoords, camera);
+
+
+    float yDifference = mouseCoords.y - player -> boundingBox.y;
+    float xDifference = mouseCoords.x - player -> boundingBox.x;
 
     /* Rotate the player so that it is always pointing at the mouse. */
-    player -> rotation = (atan2(-xDifference, yDifference) / (2 * PI)) * 360; 
+    player -> rotation = (atan2(-xDifference, yDifference) 
+                                                / (2 * PI)) * 360; 
 
 
     // Used to work out trigonometry triangles.
@@ -64,7 +73,7 @@ void movePlayer(Player* player, float elapsedTime) {
         float resultant = sqrtf(pow(xDirection, 2) + pow(yDirection, 2));
 
         float velocity = player -> velocity;
-       
+    
         // Check if the shift key has been pressed.
         if (IsKeyDown(KEY_LEFT_SHIFT)) 
             velocity *= 1.5;
@@ -207,10 +216,10 @@ void updateBullets(Bullet *bullets, float elapsedTime) {
 
             // Check if it has gone out of the screen.
 
-            if (bullets[i].boundingBox.x > screenWidth 
-                                    || bullets[i].boundingBox.x < 0 
-                                    || bullets[i].boundingBox.y > screenHeight 
-                                    || bullets[i].boundingBox.y < 0) {
+            if (bullets[i].boundingBox.x > worldWidth + 1000
+                                || bullets[i].boundingBox.x < -1000 
+                                || bullets[i].boundingBox.y > worldHeight + 1000
+                                || bullets[i].boundingBox.y < -1000) {
                 bullets[i].isActive = false;
             } 
         }

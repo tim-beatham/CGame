@@ -46,19 +46,19 @@ void spawnEnemy(Enemy *enemies) {
             switch (spawnFrom) {
                 case 0:
                     enemies[i].boundingBox.y = 0;
-                    enemies[i].boundingBox.x = rand() % screenWidth;
+                    enemies[i].boundingBox.x = rand() % worldWidth;
                     break;
                 case 1:
-                    enemies[i].boundingBox.y = screenHeight;
-                    enemies[i].boundingBox.x = rand() % screenWidth;
+                    enemies[i].boundingBox.y = worldHeight;
+                    enemies[i].boundingBox.x = rand() % worldWidth;
                     break;
                 case 2:
-                    enemies[i].boundingBox.y = rand() % screenHeight;
+                    enemies[i].boundingBox.y = rand() % worldHeight;
                     enemies[i].boundingBox.x = 0;
                     break;
                 case 3:
-                    enemies[i].boundingBox.y = rand() % screenHeight;
-                    enemies[i].boundingBox.x = screenWidth;
+                    enemies[i].boundingBox.y = rand() % worldHeight;
+                    enemies[i].boundingBox.x = worldWidth;
                     break;
             }
             break;
