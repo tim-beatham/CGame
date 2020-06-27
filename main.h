@@ -89,8 +89,9 @@ void movePlayer(Player* player, float elapsedTime, Camera2D camera,
                                 Dust *dust, Star *stars, Rectangle worldRect);
 
 void fireNormal(Bullet *bullets, float playerPosX, float playerPosY, 
-                                                            float angle);
-void fireScatter(Bullet *bullets, float playerPosX, float playerPosY);
+                                                float angle, Sound sound);
+void fireScatter(Bullet *bullets, float playerPosX, float playerPosY,
+                                                        Sound sound);
 
 
 bool isPlayerDead(Enemy* enemies, Player player);
@@ -100,10 +101,10 @@ void reset(Enemy* enemies, Player *player, CamStruct *camera);
 Enemy *instantiateEnemies();
 void drawEnemies(Enemy* enemies, Player player);
 void spawnEnemy(Enemy* enemies);
-void killEnemies(Enemy* enemies, Bullet* bullets);
+void killEnemies(Enemy* enemies, Bullet* bullets, Sound sound);
 void updateEnemies(Enemy* enemies, Player player, float elapsedTime);
 
-void freeDataStructs(Enemy *enemies, Bullet *bullet);
+void freeDataStructs(Enemy *enemies, Bullet *bullet, Star *stars, Dust *dust);
 
 
 // Draws stars in the background.

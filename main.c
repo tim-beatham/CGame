@@ -66,6 +66,14 @@ int main() {
     float timeStarted = 0;
     float timeDied = 0;
 
+    InitAudioDevice();
+
+    // Sound effects in the game.
+    Sound hitSound = LoadSound("efx/hit.wav");
+    Sound shootSound = LoadSound("efx/shoot.wav");
+    Sound explosionSound = LoadSound("efx/explosion.wav");
+    Sound playerDeadSound = LoadSound("efx/player_dead.wav");
+
     // The main game loop.
     while (!WindowShouldClose()) {
             
@@ -75,15 +83,15 @@ int main() {
             // Convert the rotation to radians.
             if (player.isAlive)
                 fireNormal(bullets, player.boundingBox.x, player.boundingBox.y, 
-                                            (player.rotation / 360) * 2 * PI);
+                                            (player.rotation / 360) * 2 * PI,
+                                            shootSound);
         }
 
         if (IsKeyReleased(KEY_Z)) 
             if (player.isAlive)
                 fireScatter(bullets, player.boundingBox.x, 
-                                                        player.boundingBox.y);
-
-        if (IsKeyPressed(KEY_R)) reset(enemies, &player, &camera);
+                                            player.boundingBox.y, 
+                                            explosionSound);
 
         if (playerInBounds(player.boundingBox, worldRect))
             updateCamera(&camera, player, dust, stars, elapsedTime);
@@ -95,7 +103,7 @@ int main() {
 
         updateBullets(bullets, elapsedTime);
         updateEnemies(enemies, player, elapsedTime);
-        killEnemies(enemies, bullets);
+        killEnemies(enemies, bullets, hitSound);
 
         movePlayer(&player, elapsedTime, camera.cam, dust, stars, worldRect);
 
@@ -117,6 +125,9 @@ int main() {
                 games++;
                 timeDied = GetTime();
                 reset(enemies, &player, &camera);
+                PlaySound(playerDeadSound);
+                spawnAmount = 1;
+                
             }
         }
 
@@ -173,7 +184,9 @@ int main() {
         elapsedTime = GetFrameTime(); 
     }
 
-    freeDataStructs(enemies, bullets);
+    freeDataStructs(enemies, bullets, stars, dust);
+    UnloadSound(hitSound);
+    UnloadSound(shootSound);
     CloseWindow();
     return 0;
 }
@@ -185,9 +198,11 @@ int main() {
  * @param enemies The array of enemies.
  * @param bullets The array of bullets.
  */
-void freeDataStructs(Enemy *enemies, Bullet *bullets) {
+void freeDataStructs(Enemy *enemies, Bullet *bullets, Star *stars, Dust *dust) {
     free(enemies);
     free(bullets);
+    free(stars);
+    free(dust);
 }
 
 /**

@@ -26,7 +26,7 @@ Enemy *instantiateEnemies() {
         enemy.color = (Color) {GetRandomValue(100, 255), 
                             GetRandomValue(100, 255), 
                             GetRandomValue(100, 255), 
-                            GetRandomValue(150, 255)};
+                            GetRandomValue(200, 255)};
 
         enemies[i] = enemy;
     }

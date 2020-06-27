@@ -13,8 +13,8 @@ Star *instantiateStars() {
         Star star;
 
         // Place the star in a random position on the screen.
-        star.position = (Vector2) { rand() % (worldWidth + 1000), 
-                                rand() % (worldHeight + 1000)};
+        star.position = (Vector2) { rand() % (int) (worldWidth + 1.5 * screenWidth), 
+                                rand() % (int) (worldHeight + 1.5 * screenHeight)};
    
         star.size = rand() % MAX_STAR_SIZE;
 
@@ -43,8 +43,8 @@ Dust *instantiateDust() {
         Dust dust;
 
         // Place the star in a random position on the screen.
-        dust.position = (Vector2) { rand() % (worldWidth + 2000), 
-                                rand() % (worldHeight + 2000)};
+        dust.position = (Vector2) { rand() % (int) (worldWidth + 3 * screenWidth), 
+                                rand() % (int) (worldHeight + 3 * screenHeight)};
 
         dust.size = rand() % MAX_STAR_SIZE;
 

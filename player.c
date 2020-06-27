@@ -111,10 +111,10 @@ Bullet *instantiateBullets() {
         bullet.size = size;
         bullet.angle = 0;
         bullet.origin = (Vector2) {bullet.size / 2, bullet.size / 2};
-        bullet.color = (Color) { GetRandomValue(150, 255), 
-                                GetRandomValue(150, 255), 
-                                GetRandomValue(150, 255),
-                                GetRandomValue(175, 255)};
+        bullet.color = (Color) { GetRandomValue(100, 255), 
+                                GetRandomValue(100, 255), 
+                                GetRandomValue(100, 255),
+                                GetRandomValue(200, 255)};
         bullets[i] = bullet;
     }
 
@@ -131,7 +131,7 @@ Bullet *instantiateBullets() {
  * @param angle the angle in which the player is rotated at.
  */
 void fireNormal(Bullet *bullets, float playerPosX, float playerPosY, 
-                                                                float angle) {
+                                                    float angle, Sound sound) {
 
     // Iterate over the bullets and find one which is not active.
     Bullet *bullet = NULL;
@@ -150,6 +150,7 @@ void fireNormal(Bullet *bullets, float playerPosX, float playerPosY,
         bullet -> boundingBox.x = playerPosX;
         bullet -> boundingBox.y = playerPosY;
         bullet -> angle = angle;
+        PlaySound(sound);
     }
 }
 
@@ -161,7 +162,8 @@ void fireNormal(Bullet *bullets, float playerPosX, float playerPosY,
  * @param playerPosX The x position of the player in the world.
  * @param playerPosY The y position of the player in the world.
  */
-void fireScatter(Bullet *bullets, float playerPosX, float playerPosY) {
+void fireScatter(Bullet *bullets, float playerPosX, float playerPosY,
+                                            Sound sound) {
 
     int numBullets = 0;
 
@@ -176,15 +178,19 @@ void fireScatter(Bullet *bullets, float playerPosX, float playerPosY) {
     float division = (2 * PI) / numBullets;
     float angle = 2 * PI;
 
-    for (int i = 0; i < MAX_BULLETS; i++) {
-        if (!bullets[i].isActive) {
-            bullets[i].isActive = true;
-            bullets[i].boundingBox.x = playerPosX;
-            bullets[i].boundingBox.y = playerPosY;
-            bullets[i].angle = angle;
-            angle -= division;
-        }
-    }  
+    if (numBullets > 0) {
+        PlaySound(sound);
+
+        for (int i = 0; i < MAX_BULLETS; i++) {
+            if (!bullets[i].isActive) {
+                bullets[i].isActive = true;
+                bullets[i].boundingBox.x = playerPosX;
+                bullets[i].boundingBox.y = playerPosY;
+                bullets[i].angle = angle;
+                angle -= division;
+            }
+        }  
+    }
 }
 
 /**
@@ -238,7 +244,7 @@ void updateBullets(Bullet *bullets, float elapsedTime) {
  * @param enemies A list of enemies in the game.
  * @param bullets A list of bullets in the game.
  */
-void killEnemies(Enemy* enemies, Bullet* bullets) {
+void killEnemies(Enemy* enemies, Bullet* bullets, Sound sound) {
     for (int i = 0; i < MAX_BULLETS; i++) {
         for (int j = 0; j < MAX_ENEMIES; j++) {
             if (enemies[j].isAlive && bullets[i].isActive) {
@@ -247,6 +253,8 @@ void killEnemies(Enemy* enemies, Bullet* bullets) {
                     
                     enemies[j].isAlive = false;
                     bullets[i].isActive = false;
+                    PlaySound(sound);
+                    break;
                 }
             }
         }
