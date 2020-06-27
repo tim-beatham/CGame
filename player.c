@@ -7,6 +7,8 @@
 #include "main.h"
 
 
+#define RUNNING_SPEED = 1.5
+
 /**
  * @brief Instantiates the player.
  * 
@@ -22,7 +24,7 @@ Player instantiatePlayer() {
     player.rotation = 0;
     player.origin = (Vector2) {player.size/2, player.size/2};
     player.isAlive = true;
-    player.velocity = 3.0f;
+    player.velocity = PLAYER_SPEED;
 
     return player;
 }
@@ -37,7 +39,7 @@ Player instantiatePlayer() {
  * 
  * @param player 
  */
-void movePlayer(Player* player) {
+void movePlayer(Player* player, float elapsedTime) {
 
     // Work out the rotation of the player.
     float yDifference = GetMouseY() - player -> boundingBox.y;
@@ -60,14 +62,20 @@ void movePlayer(Player* player) {
 
         // Work out the hypotenuse trigonometric ratio.
         float resultant = sqrtf(pow(xDirection, 2) + pow(yDirection, 2));
-        
+
+        float velocity = player -> velocity;
+       
+        // Check if the shift key has been pressed.
+        if (IsKeyDown(KEY_LEFT_SHIFT)) 
+            velocity *= 1.5;
+
         // If statement needed to prevent a divide by 0 error.
         if (resultant != 0) {
             // Work out the velocity of each component.
-            player -> boundingBox.x += ((player -> velocity) * 
-                                                    (xDirection / resultant));
-            player -> boundingBox.y += ((player -> velocity) * 
-                                                    (yDirection / resultant));
+            player -> boundingBox.x += velocity * (xDirection / resultant) * 
+                                                                elapsedTime;
+            player -> boundingBox.y += velocity * (yDirection / resultant) * 
+                                                                elapsedTime;
         }
     }
 }
@@ -89,7 +97,7 @@ Bullet *instantiateBullets() {
         Bullet bullet;
         Rectangle boundingBox = {0, 0, size, size};
         bullet.boundingBox = boundingBox;
-        bullet.velocity = 5;
+        bullet.velocity = BULLET_SPEED;
         bullet.isActive = false;
         bullet.size = size;
         bullet.angle = 0;
@@ -109,7 +117,9 @@ Bullet *instantiateBullets() {
  * @param playerPosY the y position of the player.
  * @param angle the angle in which the player is rotated at.
  */
-void fire(Bullet *bullets, float playerPosX, float playerPosY, float angle) {
+void fireNormal(Bullet *bullets, float playerPosX, float playerPosY, 
+                                                                float angle) {
+
     // Iterate over the bullets and find one which is not active.
     Bullet *bullet = NULL;
 
@@ -128,6 +138,40 @@ void fire(Bullet *bullets, float playerPosX, float playerPosY, float angle) {
         bullet -> boundingBox.y = playerPosY;
         bullet -> angle = angle;
     }
+}
+
+
+/**
+ * @brief Fires all the reminaing bullets that the player has in one go.
+ * 
+ * @param bullets An array of bullets to fire.
+ * @param playerPosX The x position of the player in the world.
+ * @param playerPosY The y position of the player in the world.
+ */
+void fireScatter(Bullet *bullets, float playerPosX, float playerPosY) {
+
+    int numBullets = 0;
+
+    // Count how many bullets the player has to use.
+    for (int i = 0; i < MAX_BULLETS; i++) {
+        if (!bullets[i].isActive) {
+            numBullets++;
+        }
+    }
+
+    // Fire bullets in all directions.
+    float division = (2 * PI) / numBullets;
+    float angle = 2 * PI;
+
+    for (int i = 0; i < MAX_BULLETS; i++) {
+        if (!bullets[i].isActive) {
+            bullets[i].isActive = true;
+            bullets[i].boundingBox.x = playerPosX;
+            bullets[i].boundingBox.y = playerPosY;
+            bullets[i].angle = angle;
+            angle -= division;
+        }
+    }  
 }
 
 /**
@@ -149,15 +193,17 @@ void drawBullets(Bullet *bullets) {
  * 
  * @param bullets the array of bullets.
  */
-void updateBullets(Bullet *bullets) {                                                    
+void updateBullets(Bullet *bullets, float elapsedTime) {                                                    
             
     for (int i = 0; i < MAX_BULLETS; i++) {
         if (bullets[i].isActive) {
             // Update the position of the bullet.
             bullets[i].boundingBox.x += 
-                                bullets[i].velocity * -sinf(bullets[i].angle);
+                                bullets[i].velocity * -sinf(bullets[i].angle) 
+                                                            * elapsedTime;
             bullets[i].boundingBox.y += 
-                                bullets[i].velocity * cosf(bullets[i].angle);
+                                bullets[i].velocity * cosf(bullets[i].angle) 
+                                                            * elapsedTime;
 
             // Check if it has gone out of the screen.
 
@@ -191,24 +237,6 @@ void killEnemies(Enemy* enemies, Bullet* bullets) {
             }
         }
     } 
-}
-
-/**
- * @brief Resets the game back to the start. 
- * 
- * @param enemies the array of enemies in the game.
- * @param player a pointer to the player so that we can change the 
- * position of the player.
- */
-void reset(Enemy *enemies,  Player *player) {
-    
-    for (int i = 0; i < MAX_ENEMIES; i++) {
-        enemies[i].isAlive = false;
-    }
-
-    player -> boundingBox.x = screenWidth / 2;
-    player -> boundingBox.y = screenHeight / 2;
-    player -> isAlive = true;
 }
 
 /**

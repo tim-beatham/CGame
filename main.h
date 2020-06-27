@@ -3,11 +3,19 @@
 
 #include "raylib.h"
 
-#define MAX_BULLETS 10
+#define MAX_BULLETS 20
 
+#define PLAYER_SPEED 100.0f
+#define ENEMY_SPEED 100.0f
+#define BULLET_SPEED 1000.0f
+
+#define NUM_STARS 100
+
+#define MAX_STAR_SIZE 5
 
 const int screenWidth = 1024;
 const int screenHeight = 768;
+
 
 
 typedef struct {
@@ -40,12 +48,22 @@ typedef struct {
     float velocity;
 } Enemy;
 
+enum BulletType {
+    NORMAL,
+    SCARRER
+};
+
 Bullet *instantiateBullets();
 Player instantiatePlayer();
 void drawBullets(Bullet *bullets);
-void updateBullets(Bullet *bullets);
-void movePlayer(Player* player);
-void fire(Bullet *bullets, float playerPosX, float playerPosY, float angle);
+void updateBullets(Bullet *bullets, float elapsedTime);
+void movePlayer(Player* player, float elapsedTime);
+
+void fireNormal(Bullet *bullets, float playerPosX, float playerPosY, 
+                                                            float angle);
+void fireScatter(Bullet *bullets, float playerPosX, float playerPosY);
+
+
 bool isPlayerDead(Enemy* enemies, Player player);
 void reset(Enemy* enemies, Player *player);
 
@@ -54,10 +72,19 @@ Enemy *instantiateEnemies();
 void drawEnemies(Enemy* enemies, Player player);
 void spawnEnemy(Enemy* enemies);
 void killEnemies(Enemy* enemies, Bullet* bullets);
-void updateEnemies(Enemy* enemies, Player player);
+void updateEnemies(Enemy* enemies, Player player, float elapsedTime);
 
 void freeDataStructs(Enemy *enemies, Bullet *bullet);
 
+// Drawing a star in the background.
+typedef struct {
+    int size;
+    Vector2 position;
+    Color color;
+} Star;
 
+// Draws stars in the background.
+void drawStars(Star *stars);
+Star *instantiateStars();
 
 #endif

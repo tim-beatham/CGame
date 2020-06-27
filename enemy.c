@@ -22,7 +22,7 @@ Enemy *instantiateEnemies() {
         enemy.origin = (Vector2) {enemy.size / 2, enemy.size / 2};
         enemy.rotation = 0;
         enemy.isAlive = false;
-        enemy.velocity = 2;
+        enemy.velocity = ENEMY_SPEED;
         enemies[i] = enemy;
     }
 
@@ -72,7 +72,7 @@ void spawnEnemy(Enemy *enemies) {
  * @param enemies An array of enemies in the game.
  * @param player The player
  */
-void updateEnemies(Enemy *enemies, Player player) {
+void updateEnemies(Enemy *enemies, Player player, float elapsedTime) {
     
     for (int i = 0; i < MAX_ENEMIES; i++) {
          // Work out the rotation of the player.
@@ -83,8 +83,10 @@ void updateEnemies(Enemy *enemies, Player player) {
             
         enemies[i].rotation = (rotation / (2 * PI)) * 360; 
 
-        enemies[i].boundingBox.x += enemies[i].velocity * -sinf(rotation);
-        enemies[i].boundingBox.y += enemies[i].velocity * cosf(rotation);
+        enemies[i].boundingBox.x += enemies[i].velocity * -sinf(rotation) 
+                                                        * elapsedTime;
+        enemies[i].boundingBox.y += enemies[i].velocity * cosf(rotation)
+                                                        * elapsedTime;
 
 
     }
