@@ -6,7 +6,10 @@
 #define MAX_BULLETS 20
 
 #define PLAYER_SPEED 100.0f
-#define ENEMY_SPEED 100.0f
+
+#define MIN_ENEMY_SPEED 50.0f
+#define MAX_ENEMY_SPEED 180.0f
+
 #define BULLET_SPEED 1000.0f
 #define CAM_SPEED 30.0f
 
@@ -16,6 +19,9 @@
 #define MAX_DUST_SIZE 10
 
 #define NUM_DUST 1000
+
+#define MAX_ENEMY_SIZE 30
+#define MIN_ENEMY_SIZE 15
 
 const int screenWidth = 1024;
 const int screenHeight = 768;
@@ -30,6 +36,7 @@ typedef struct {
     float size;
     Vector2 origin;
     Rectangle boundingBox;
+    Color color;
 } Bullet;
 
 typedef struct {
@@ -51,6 +58,7 @@ typedef struct {
     bool isAlive;
     Vector2 origin;
     float velocity;
+    Color color;
 } Enemy;
 
 

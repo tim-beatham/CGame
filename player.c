@@ -18,7 +18,7 @@ Player instantiatePlayer() {
 
     Player player;
 
-    player.size = 50;
+    player.size = 25;
     player.boundingBox = (Rectangle) {worldWidth/2, worldHeight/2, 
                                             player.size, player.size};
     player.rotation = 0;
@@ -111,6 +111,10 @@ Bullet *instantiateBullets() {
         bullet.size = size;
         bullet.angle = 0;
         bullet.origin = (Vector2) {bullet.size / 2, bullet.size / 2};
+        bullet.color = (Color) { GetRandomValue(150, 255), 
+                                GetRandomValue(150, 255), 
+                                GetRandomValue(150, 255),
+                                GetRandomValue(175, 255)};
         bullets[i] = bullet;
     }
 
@@ -192,7 +196,8 @@ void drawBullets(Bullet *bullets) {
 
     for (int i = 0; i < MAX_BULLETS; i++) {
         if (bullets[i].isActive) {
-            DrawRectanglePro(bullets[i].boundingBox, bullets[i].origin, 0, RED);
+            DrawRectanglePro(bullets[i].boundingBox, bullets[i].origin, 0, 
+                                                        bullets[i].color);
         }
     }
 }

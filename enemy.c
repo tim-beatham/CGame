@@ -17,12 +17,17 @@ Enemy *instantiateEnemies() {
     // Populating each enemy in the enemies list.
     for (int i = 0; i < MAX_ENEMIES; i++) {
         Enemy enemy;
-        enemy.size = 20;
+        enemy.size = GetRandomValue(MIN_ENEMY_SIZE, MAX_ENEMY_SIZE);
         enemy.boundingBox = (Rectangle) {0, 0, enemy.size, enemy.size};
         enemy.origin = (Vector2) {enemy.size / 2, enemy.size / 2};
         enemy.rotation = 0;
         enemy.isAlive = false;
-        enemy.velocity = ENEMY_SPEED;
+        enemy.velocity = GetRandomValue(MIN_ENEMY_SPEED, MAX_ENEMY_SPEED);
+        enemy.color = (Color) {GetRandomValue(100, 255), 
+                            GetRandomValue(100, 255), 
+                            GetRandomValue(100, 255), 
+                            GetRandomValue(150, 255)};
+
         enemies[i] = enemy;
     }
 
@@ -104,7 +109,8 @@ void drawEnemies(Enemy *enemies, Player player) {
         if (enemies[i].isAlive) {
 
             DrawRectanglePro(enemies[i].boundingBox, enemies[i].origin, 
-                                                    enemies[i].rotation, BLUE);
+                                                    enemies[i].rotation, 
+                                                    enemies[i].color);
         }
     }
 

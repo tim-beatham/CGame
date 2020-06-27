@@ -58,6 +58,14 @@ int main() {
 
     CamStruct camera = instantiateCamera(worldWidth / 2, worldHeight / 2);
 
+    // True if the game has started.
+    bool start = false;
+    int games = 0;
+
+    // Time since the user pressed P.
+    float timeStarted = 0;
+    float timeDied = 0;
+
     // The main game loop.
     while (!WindowShouldClose()) {
             
@@ -80,25 +88,37 @@ int main() {
         if (playerInBounds(player.boundingBox, worldRect))
             updateCamera(&camera, player, dust, stars, elapsedTime);
 
+        if (!start && IsKeyReleased(KEY_P)) {
+            start = true;
+            timeStarted = GetTime();
+        }
+
         updateBullets(bullets, elapsedTime);
         updateEnemies(enemies, player, elapsedTime);
         killEnemies(enemies, bullets);
 
         movePlayer(&player, elapsedTime, camera.cam, dust, stars, worldRect);
 
-        if ((GetTime() - timeLastSpawn) > 4){
-            for (int i = 0; i < spawnAmount; i++)
-                spawnEnemy(enemies);
-            timeLastSpawn = GetTime();
+        if (start){
+            if ((GetTime() - timeLastSpawn) > 4){
+                for (int i = 0; i < spawnAmount; i++)
+                    spawnEnemy(enemies);
+                timeLastSpawn = GetTime();
+            }
+
+            if (GetTime() - lastChange > 10) {
+                spawnAmount++;
+                lastChange = GetTime();
+            } 
+
+            if (isPlayerDead(enemies, player)) {
+                player.isAlive = false;
+                start = false;
+                games++;
+                timeDied = GetTime();
+                reset(enemies, &player, &camera);
+            }
         }
-
-        if (GetTime() - lastChange > 10) {
-            spawnAmount++;
-            lastChange = GetTime();
-        } 
-
-        if (isPlayerDead(enemies, player))
-            player.isAlive = false;
 
         BeginDrawing();
 
@@ -108,16 +128,45 @@ int main() {
 
                 drawStars(stars);
 
+                drawBullets(bullets);
+
                 if (player.isAlive)
-                    DrawRectanglePro(player.boundingBox, player.origin,
-                                                            player.rotation, RED);          
-                drawBullets(bullets); 
+                    DrawPoly((Vector2) {player.boundingBox.x, player.boundingBox.y}, 
+                                            3, player.size, player.rotation,
+                                            (Color) {255, 0, 0, 200});
+
+    
                 drawEnemies(enemies, player);
 
             drawDust(dust);
+
             EndMode2D();
 
-            DrawFPS(10, 10);
+            
+
+            // If the game has not started then draw the start screen.
+            if (!start) {
+
+                char *msg = "Press P to Start";
+                
+                // Work out the size of the text.
+                int width = MeasureText(msg, 20);
+
+                DrawText(FormatText(msg), screenWidth/2 - width/2, 
+                                        50, 20, WHITE);
+
+                if (games > 0) {
+                    const char *diedMsg = FormatText("You lasted %.2f seconds", 
+                                                                    timeDied);
+                    int diedWidth = MeasureText(diedMsg, 20);
+                    DrawText(diedMsg, screenWidth/2 - diedWidth/2, screenHeight/2,
+                                                                20, WHITE);
+
+                }
+            } else {                
+                DrawText(FormatText("Time: %.2f", GetTime() - timeStarted), 
+                                                        10, 10, 20, WHITE);
+            }
 
         EndDrawing();      
 
