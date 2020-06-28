@@ -156,6 +156,21 @@ void fireNormal(Bullet *bullets, float playerPosX, float playerPosY,
 
 
 /**
+ * @brief Draws the player to the world.
+ * 
+ * @param player The player to draw.
+ */
+void drawPlayer(Player player) {
+    // Draw the player.
+    if (player.isAlive)
+        DrawPoly((Vector2) {player.boundingBox.x, player.boundingBox.y}, 
+                                3, player.size, player.rotation,
+                                (Color) {255, 0, 0, 200});
+
+}
+
+
+/**
  * @brief Fires all the reminaing bullets that the player has in one go.
  * 
  * @param bullets An array of bullets to fire.

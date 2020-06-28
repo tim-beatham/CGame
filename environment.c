@@ -3,6 +3,11 @@
 #include "main.h"
 
 
+/**
+ * @brief Creates an array of stars.
+ * 
+ * @return Star* A point to the first element in the array.
+ */
 Star *instantiateStars() {
     // Allocate memory for the stars.
     Star *stars = (Star*) malloc (NUM_STARS * sizeof(Star));
@@ -13,8 +18,9 @@ Star *instantiateStars() {
         Star star;
 
         // Place the star in a random position on the screen.
-        star.position = (Vector2) { rand() % (int) (worldWidth + 1.5 * screenWidth), 
-                                rand() % (int) (worldHeight + 1.5 * screenHeight)};
+        star.position = (Vector2) { rand() % 
+                            (int) (worldWidth + 1.5 * screenWidth), 
+                            rand() % (int) (worldHeight + 1.5 * screenHeight)};
    
         star.size = rand() % MAX_STAR_SIZE;
 
@@ -22,13 +28,16 @@ Star *instantiateStars() {
 
         stars[i] = star;  
 
-        
     }
 
     return stars;
 }
 
-
+/**
+ * @brief Draws all the stars in the stars array.
+ * 
+ * @param stars The stars to draw.
+ */
 void drawStars(Star *stars) {
     for (int i = 0; i < NUM_STARS; i++) {
         DrawRectangleV(stars[i].position, (Vector2) {stars[i].size, 
@@ -36,6 +45,11 @@ void drawStars(Star *stars) {
     }
 }
 
+/**
+ * @brief Creates a dust array.
+ * 
+ * @return Dust* An array of dust.
+ */
 Dust *instantiateDust() {
     Dust *dusts = (Dust*) malloc(NUM_DUST * sizeof(Dust));
 
@@ -56,6 +70,11 @@ Dust *instantiateDust() {
     return dusts;
 }
 
+/**
+ * @brief Draws each dust element.
+ * 
+ * @param dust The dust we want to draw to the screen.
+ */
 void drawDust(Dust *dust) {
     for (int i = 0; i < NUM_DUST; i++) {
         DrawRectangleV(dust[i].position, (Vector2) {dust[i].size, 
@@ -63,6 +82,13 @@ void drawDust(Dust *dust) {
     }
 }
 
+/**
+ * @brief Moves the dust by an offset this is used for parallax.
+ * 
+ * @param dust An array of dust.
+ * @param offsetX The x offset to move the dust by.
+ * @param offsetY The y offset to move the dust by.
+ */
 void moveDust(Dust *dust, float offsetX, float offsetY) {
     for (int i = 0; i < NUM_DUST; i++) {
         dust[i].position.x += offsetX;
@@ -70,13 +96,28 @@ void moveDust(Dust *dust, float offsetX, float offsetY) {
     }
 }
 
-void moveStars(Star *dust, float offsetX, float offsetY) {
+/**
+ * @brief Moves the stars by a given offset which is used for parallax.
+ * 
+ * @param dust An arry of stars which we want to offset for parallax.
+ * @param offsetX The x offset for parallax.
+ * @param offsetY The y offset for parallax.
+ */
+void moveStars(Star *stars, float offsetX, float offsetY) {
     for (int i = 0; i < NUM_DUST; i++) {
-        dust[i].position.x += offsetX;
-        dust[i].position.y += offsetY;
+        stars[i].position.x += offsetX;
+        stars[i].position.y += offsetY;
     }
 }
 
+/**
+ * @brief Checks if a player is in the playing space.
+ * 
+ * @param player The players bounding box.
+ * @param worldRect The worlds bounding box.
+ * @return true if the two entities collide.
+ * @return false if the two entities do not collide.
+ */
 bool playerInBounds(Rectangle player, Rectangle worldRect) {
     return CheckCollisionRecs(player, worldRect);
 }

@@ -3,6 +3,14 @@
 #include "main.h"
 
 
+/**
+ * @brief Creates an instance of a camera pointing at the cartesian
+ * coordinates specified.
+ * 
+ * @param startPosX The starting X position of the camera in the world.
+ * @param startPosY The starting Y position of the camera in the world.
+ * @return CamStruct The camera struct that was created.
+ */
 CamStruct instantiateCamera(float startPosX, float startPosY) {
     CamStruct camStruct;
 
@@ -19,6 +27,16 @@ CamStruct instantiateCamera(float startPosX, float startPosY) {
     return camStruct;
 }
 
+/**
+ * @brief Updates the camera so that it follows the player.
+ * 
+ * @param camera The camera to move.
+ * @param player The player in which the camera is to follow.
+ * @param dust An array of dust for parallax.
+ * @param stars An array of stars for parllax
+ * @param elapsedTime The time since the last frame. Used to normalize
+ * the speed of the player at different frame rates.
+ */
 void updateCamera(CamStruct *camera, Player player,
                         Dust *dust, Star *stars, float elapsedTime) {
 

@@ -23,6 +23,8 @@
 #define MAX_ENEMY_SIZE 30
 #define MIN_ENEMY_SIZE 15
 
+#define MAX_ENEMIES 100
+
 const int screenWidth = 1024;
 const int screenHeight = 768;
 
@@ -47,9 +49,6 @@ typedef struct {
     bool isAlive;
     float velocity;
 } Player;
-
-
-#define MAX_ENEMIES 100
 
 typedef struct {    
     Rectangle boundingBox;
@@ -106,6 +105,7 @@ void updateEnemies(Enemy* enemies, Player player, float elapsedTime);
 
 void freeDataStructs(Enemy *enemies, Bullet *bullet, Star *stars, Dust *dust);
 
+void drawPlayer(Player player);
 
 // Draws stars in the background.
 void drawStars(Star *stars);

@@ -53,9 +53,11 @@ int main() {
     
     float elapsedTime = 0;
 
+    // The worlds bounding box. Used to check if the player is in playing space.
     Rectangle worldRect = (Rectangle) {1000, 1000, worldWidth - 1000, 
                                                     worldHeight - 1000};
 
+    // The camera which tracks the player at a specified velocity.
     CamStruct camera = instantiateCamera(worldWidth / 2, worldHeight / 2);
 
     // True if the game has started.
@@ -75,10 +77,9 @@ int main() {
     Sound playerDeadSound = LoadSound("efx/player_dead.wav");
 
     // The main game loop.
-    while (!WindowShouldClose()) {
-            
-                     
-
+    while (!WindowShouldClose()) {          
+        
+        // Shoot a bullet if the space key was pressed.
         if (IsKeyReleased(KEY_SPACE)) {
             // Convert the rotation to radians.
             if (player.isAlive)
@@ -87,12 +88,15 @@ int main() {
                                             shootSound);
         }
 
+        // Shoot a scatter of bullets if the Z key was pressed.
         if (IsKeyReleased(KEY_Z)) 
             if (player.isAlive)
                 fireScatter(bullets, player.boundingBox.x, 
                                             player.boundingBox.y, 
                                             explosionSound);
 
+        // If the player is in bounds then update the camera.
+        // Otherwise stop tracking the player if the camera is not in bounds.
         if (playerInBounds(player.boundingBox, worldRect))
             updateCamera(&camera, player, dust, stars, elapsedTime);
 
@@ -101,12 +105,15 @@ int main() {
             timeStarted = GetTime();
         }
 
+        
         updateBullets(bullets, elapsedTime);
         updateEnemies(enemies, player, elapsedTime);
         killEnemies(enemies, bullets, hitSound);
 
         movePlayer(&player, elapsedTime, camera.cam, dust, stars, worldRect);
 
+        /* If the game is playing spawn enemies in every 4 seconds and increment
+        the nunber of enemies that spawn at once by 1 every 10 seconds. */
         if (start){
             if ((GetTime() - timeLastSpawn) > 4){
                 for (int i = 0; i < spawnAmount; i++)
@@ -119,6 +126,7 @@ int main() {
                 lastChange = GetTime();
             } 
 
+            // Reset the game if the player has died.
             if (isPlayerDead(enemies, player)) {
                 player.isAlive = false;
                 start = false;
@@ -140,20 +148,14 @@ int main() {
                 drawStars(stars);
 
                 drawBullets(bullets);
-
-                if (player.isAlive)
-                    DrawPoly((Vector2) {player.boundingBox.x, player.boundingBox.y}, 
-                                            3, player.size, player.rotation,
-                                            (Color) {255, 0, 0, 200});
-
-    
+                
+                drawPlayer(player);
+                
                 drawEnemies(enemies, player);
 
-            drawDust(dust);
+                drawDust(dust);
 
-            EndMode2D();
-
-            
+            EndMode2D();           
 
             // If the game has not started then draw the start screen.
             if (!start) {
@@ -174,16 +176,20 @@ int main() {
                                                                 20, WHITE);
 
                 }
-            } else {                
+            } else {
+                // Otherwise display how long the player has lasted  for.                
                 DrawText(FormatText("Time: %.2f", GetTime() - timeStarted), 
                                                         10, 10, 20, WHITE);
             }
 
         EndDrawing();      
+        
 
+        // Get the time since the last frame.
         elapsedTime = GetFrameTime(); 
     }
 
+    /* Free array elements and unload the sounds before closing the window. */
     freeDataStructs(enemies, bullets, stars, dust);
     UnloadSound(hitSound);
     UnloadSound(shootSound);
@@ -197,6 +203,8 @@ int main() {
  * 
  * @param enemies The array of enemies.
  * @param bullets The array of bullets.
+ * @param stars The array of stars which we are to free from memory.
+ * @param dust THe array of dust particles which we are to free from memory.
  */
 void freeDataStructs(Enemy *enemies, Bullet *bullets, Star *stars, Dust *dust) {
     free(enemies);
